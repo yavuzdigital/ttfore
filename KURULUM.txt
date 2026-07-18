@@ -1,0 +1,95 @@
+# TikTok API - KURULUM REHBERİ
+# ================================
+
+## 1. Python 3.10+ kurulu mu? Kontrol et
+python --version
+# Çıktı: Python 3.10.x veya üstü olmalı
+
+## 2. Projeyi sunucuya yükle
+# Dosyaları FTP/SCP ile sunucuna at:
+#   - web.py
+#   - tiktok/ (klasör)
+#   - lib/ (klasör)
+#   - data/ (klasör)
+#   - templates/ (klasör)
+#   - www.tiktok.com_cookies.txt
+#   - requirements.txt
+
+## 3. Bağımlılıkları kur
+cd /proje/dizini
+pip install -r requirements.txt
+
+## 4. SSL sertifikası (opsiyonel, HTTPS için)
+# Flask standalone çalışır, HTTP varsayılan.
+# Nginx + reverse proxy önerilir (aşağıda anlatıldı).
+
+## 5. Çalıştır (arka planda)
+# Basit:
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python python web.py
+
+# Arka planda kalıcı çalıştırma (nohup):
+nohup bash -c "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python python web.py" > api.log 2>&1 &
+
+# Veya systemd service (önerilen):
+sudo nano /etc/systemd/system/tiktok-api.service
+
+# İçine şunu yapıştır:
+"""
+[Unit]
+Description=TikTok API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/proje/dizini
+Environment=PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+ExecStart=/usr/bin/python3 web.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+"""
+
+sudo systemctl daemon-reload
+sudo systemctl enable tiktok-api
+sudo systemctl start tiktok-api
+sudo systemctl status tiktok-api
+
+## 6. Test et
+curl http://127.0.0.1:5000/api/cookie
+# {"ok":true} görmelisin
+
+## 7. Nginx ile yayınlama (isteğe bağlı)
+# /etc/nginx/sites-available/tiktok-api:
+"""
+server {
+    listen 80;
+    server_name api.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+"""
+
+sudo ln -s /etc/nginx/sites-available/tiktok-api /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+## 8. PHP'den kullanma
+function tikTokAra($keyword) {
+    $ch = curl_init('http://127.0.0.1:5000/api/search/user');
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_POSTFIELDS => json_encode(['keyword' => $keyword, 'count' => 10]),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 15,
+    ]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($res, true);
+}

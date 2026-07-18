@@ -1,0 +1,352 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TikTok API Tester</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d0d0d;color:#ddd;min-height:100vh}
+    header{padding:24px 32px;border-bottom:1px solid #1e1e1e;display:flex;align-items:center;gap:16px;position:sticky;top:0;background:#0d0d0d;z-index:10}
+    header h1{font-size:1.15rem;font-weight:600;color:#fff}
+    .badge{font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:12px;background:#1a2a3a;color:#60a5fa}
+    #status-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;margin-left:auto;animation:pulse 2s infinite}
+    #status-label{font-size:.8rem;color:#888}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    main{max-width:860px;margin:0 auto;padding:28px 20px;display:flex;flex-direction:column;gap:14px}
+    .card{background:#141414;border:1px solid #222;border-radius:10px;overflow:hidden}
+    .card-header{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s}
+    .card-header:hover{background:#1a1a1a}
+    .method{font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:4px;min-width:42px;text-align:center;flex-shrink:0}
+    .GET{background:#12312a;color:#4ade80}.POST{background:#12213a;color:#60a5fa}
+    .ep-path{font-family:'Cascadia Code','Fira Code',monospace;font-size:.9rem;color:#e5e5e5;font-weight:500}
+    .ep-desc{font-size:.78rem;color:#666;margin-left:auto}
+    .chevron{margin-left:12px;color:#555;transition:transform .2s;flex-shrink:0}
+    .card.open .chevron{transform:rotate(180deg)}
+    .card-body{display:none;padding:16px 18px;border-top:1px solid #1e1e1e;background:#0f0f0f}
+    .card.open .card-body{display:block}
+    .fields{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+    .field{display:flex;flex-direction:column;gap:5px}
+    .field label{font-size:.74rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em}
+    .field input,.field select{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:8px 12px;color:#e0e0e0;font-size:.87rem;font-family:inherit;outline:none;transition:border .15s}
+    .field input:focus,.field select:focus{border-color:#3a3a5a}
+    .field input::placeholder{color:#444}
+    .actions{display:flex;gap:10px;align-items:center}
+    .btn-send{background:#1a2a4a;border:1px solid #2a4a7a;color:#60a5fa;padding:8px 20px;border-radius:6px;font-size:.83rem;font-weight:600;cursor:pointer;transition:background .15s}
+    .btn-send:hover{background:#223a6a}
+    .btn-send:disabled{opacity:.4;cursor:not-allowed}
+    .btn-clear{background:none;border:none;color:#555;font-size:.78rem;cursor:pointer;padding:8px 6px}
+    .btn-clear:hover{color:#888}
+    .status-pill{font-size:.75rem;padding:3px 10px;border-radius:10px;font-weight:600}
+    .ok{background:#12312a;color:#4ade80}.err{background:#31121a;color:#f87171}.loading{background:#1a1a2a;color:#60a5fa}
+    .response{margin-top:14px;background:#0a0a0a;border:1px solid #1e1e1e;border-radius:7px;overflow:hidden}
+    .res-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #1a1a1a;font-size:.75rem;color:#666}
+    .copy-btn{background:none;border:none;color:#555;cursor:pointer;font-size:.75rem}
+    .copy-btn:hover{color:#aaa}
+    pre{padding:14px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.78rem;line-height:1.6;overflow-x:auto;max-height:360px;overflow-y:auto;color:#c8c8c8;white-space:pre-wrap;word-break:break-all}
+    .json-key{color:#9ec8f7}.json-str{color:#c3e88d}.json-num{color:#f78c6c}.json-bool{color:#ff9cac}.json-null{color:#888}
+  </style>
+</head>
+<body>
+<header>
+  <h1>TikTok API</h1>
+  <span class="badge">v2</span>
+  <span id="status-label" style="margin-left:auto;font-size:.8rem;color:#888">kontrol ediliyor...</span>
+  <span id="status-dot" style="background:#555"></span>
+</header>
+<main>
+
+  <!-- /api/cookie -->
+  <div class="card open" id="c-cookie">
+    <div class="card-header" onclick="toggle('c-cookie')">
+      <span class="method GET">GET</span>
+      <span class="ep-path">/api/cookie</span>
+      <span class="ep-desc">Cookie durumu</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="actions">
+        <button class="btn-send" onclick="send('cookie','GET','/api/cookie',null,'r-cookie')">Gönder</button>
+        <span id="s-cookie"></span>
+      </div>
+      <div id="r-cookie"></div>
+    </div>
+  </div>
+
+  <!-- /api/countries -->
+  <div class="card" id="c-countries">
+    <div class="card-header" onclick="toggle('c-countries')">
+      <span class="method GET">GET</span>
+      <span class="ep-path">/api/countries</span>
+      <span class="ep-desc">54 ülke listesi</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="actions">
+        <button class="btn-send" onclick="send('countries','GET','/api/countries',null,'r-countries')">Gönder</button>
+        <span id="s-countries"></span>
+      </div>
+      <div id="r-countries"></div>
+    </div>
+  </div>
+
+  <!-- /api/resolve -->
+  <div class="card" id="c-resolve">
+    <div class="card-header" onclick="toggle('c-resolve')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/resolve</span>
+      <span class="ep-desc">@username → UID</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>username</label>
+          <input id="f-resolve-username" type="text" placeholder="tiktok" value="tiktok">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('resolve','POST','/api/resolve',{username:v('f-resolve-username')},'r-resolve')">Gönder</button>
+        <span id="s-resolve"></span>
+      </div>
+      <div id="r-resolve"></div>
+    </div>
+  </div>
+
+  <!-- /api/search -->
+  <div class="card" id="c-search">
+    <div class="card-header" onclick="toggle('c-search')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/search</span>
+      <span class="ep-desc">Genel arama</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>keyword</label>
+          <input id="f-search-keyword" type="text" placeholder="hadise" value="hadise">
+        </div>
+        <div class="field">
+          <label>type (0=video, 1=kullanıcı, 2=hashtag)</label>
+          <select id="f-search-type"><option value="1">1 - Kullanıcı</option><option value="0">0 - Video</option><option value="2">2 - Hashtag</option></select>
+        </div>
+        <div class="field">
+          <label>count</label>
+          <input id="f-search-count" type="number" value="10" min="1" max="20">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('search','POST','/api/search',{keyword:v('f-search-keyword'),type:+v('f-search-type'),count:+v('f-search-count')},'r-search')">Gönder</button>
+        <span id="s-search"></span>
+      </div>
+      <div id="r-search"></div>
+    </div>
+  </div>
+
+  <!-- /api/search/user -->
+  <div class="card" id="c-search-user">
+    <div class="card-header" onclick="toggle('c-search-user')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/search/user</span>
+      <span class="ep-desc">Kullanıcı ara</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>keyword</label>
+          <input id="f-su-keyword" type="text" placeholder="hadise" value="hadise">
+        </div>
+        <div class="field">
+          <label>count</label>
+          <input id="f-su-count" type="number" value="10" min="1" max="20">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('search-user','POST','/api/search/user',{keyword:v('f-su-keyword'),count:+v('f-su-count')},'r-search-user')">Gönder</button>
+        <span id="s-search-user"></span>
+      </div>
+      <div id="r-search-user"></div>
+    </div>
+  </div>
+
+  <!-- /api/search/video -->
+  <div class="card" id="c-search-video">
+    <div class="card-header" onclick="toggle('c-search-video')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/search/video</span>
+      <span class="ep-desc">Video ara</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>keyword</label>
+          <input id="f-sv-keyword" type="text" placeholder="hadise" value="hadise">
+        </div>
+        <div class="field">
+          <label>count</label>
+          <input id="f-sv-count" type="number" value="10" min="1" max="20">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('search-video','POST','/api/search/video',{keyword:v('f-sv-keyword'),count:+v('f-sv-count')},'r-search-video')">Gönder</button>
+        <span id="s-search-video"></span>
+      </div>
+      <div id="r-search-video"></div>
+    </div>
+  </div>
+
+  <!-- /api/search/music -->
+  <div class="card" id="c-search-music">
+    <div class="card-header" onclick="toggle('c-search-music')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/search/music</span>
+      <span class="ep-desc">Müzik ara</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>keyword</label>
+          <input id="f-sm-keyword" type="text" placeholder="hadise" value="hadise">
+        </div>
+        <div class="field">
+          <label>count</label>
+          <input id="f-sm-count" type="number" value="10" min="1" max="20">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('search-music','POST','/api/search/music',{keyword:v('f-sm-keyword'),count:+v('f-sm-count')},'r-search-music')">Gönder</button>
+        <span id="s-search-music"></span>
+      </div>
+      <div id="r-search-music"></div>
+    </div>
+  </div>
+
+  <!-- /api/feed/v2 -->
+  <div class="card" id="c-feed2">
+    <div class="card-header" onclick="toggle('c-feed2')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/feed/v2</span>
+      <span class="ep-desc">Video akışı (protobuf)</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>feed_type (0=Sana Özel, 6=Takip Edilen)</label>
+          <select id="f-feed2-type"><option value="0">0 - Sana Özel</option><option value="6">6 - Takip Edilen</option></select>
+        </div>
+        <div class="field">
+          <label>count</label>
+          <input id="f-feed2-count" type="number" value="6" min="1" max="20">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('feed2','POST','/api/feed/v2',{feed_type:+v('f-feed2-type'),count:+v('f-feed2-count')},'r-feed2')">Gönder</button>
+        <span id="s-feed2"></span>
+      </div>
+      <div id="r-feed2"></div>
+    </div>
+  </div>
+
+  <!-- /api/live -->
+  <div class="card" id="c-live">
+    <div class="card-header" onclick="toggle('c-live')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/live</span>
+      <span class="ep-desc">Canlı yayın odaları (webcast)</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="fields">
+        <div class="field">
+          <label>country</label>
+          <select id="f-live-country">
+            <option value="AUTO">AUTO (IP tespiti)</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-send" onclick="send('live','POST','/api/live',{country:v('f-live-country')},'r-live')">Gönder</button>
+        <span id="s-live"></span>
+      </div>
+      <div id="r-live"></div>
+    </div>
+  </div>
+
+</main>
+<script>
+const v=id=>document.getElementById(id).value;
+
+function toggle(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function hl(json){
+  if(typeof json!=='string')json=JSON.stringify(json,null,2);
+  return json
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+\.?\d*(?:[eE][+\-]?\d+)?)/g,function(m){
+      if(/^"/.test(m)){return /":$/.test(m)||/:$/.test(m)?`<span class="json-key">${m}</span>`:`<span class="json-str">${m}</span>`}
+      if(/true|false/.test(m))return`<span class="json-bool">${m}</span>`;
+      if(/null/.test(m))return`<span class="json-null">${m}</span>`;
+      return`<span class="json-num">${m}</span>`;
+    });
+}
+
+function renderResponse(containerId, statusId, data, ok, ms){
+  const json = JSON.stringify(data, null, 2);
+  document.getElementById(statusId).innerHTML =
+    `<span class="status-pill ${ok?'ok':'err'}">${ok?'200 OK':'HATA'}</span> <span style="color:#555;font-size:.75rem">${ms}ms</span>`;
+  document.getElementById(containerId).innerHTML=`
+    <div class="response">
+      <div class="res-bar">
+        <span>${typeof data==='object'&&data!==null?`${Array.isArray(data)?data.length+' öğe':Object.keys(data).length+' alan'}`:'—'}</span>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(json).replace(/</g,'\\u003c')});this.textContent='✓ Kopyalandı';setTimeout(()=>this.textContent='Kopyala',1500)">Kopyala</button>
+      </div>
+      <pre>${hl(json)}</pre>
+    </div>`;
+}
+
+async function send(key, method, url, body, resId){
+  const btn=document.querySelector(`#c-${key} .btn-send`);
+  const sId=`s-${key}`;
+  btn.disabled=true;
+  document.getElementById(sId).innerHTML='<span class="status-pill loading">İstek gönderiliyor...</span>';
+  document.getElementById(resId).innerHTML='';
+  const t=Date.now();
+  try{
+    const opts={method,headers:{'Content-Type':'application/json'}};
+    if(body)opts.body=JSON.stringify(body);
+    const r=await fetch(url,opts);
+    const data=await r.json();
+    renderResponse(resId,sId,data,r.ok,Date.now()-t);
+  }catch(e){
+    document.getElementById(sId).innerHTML='<span class="status-pill err">Bağlantı hatası</span>';
+    document.getElementById(resId).innerHTML=`<div class="response"><pre style="color:#f87171">${e.message}</pre></div>`;
+  }
+  btn.disabled=false;
+}
+
+// Cookie durumu
+fetch('/api/cookie').then(r=>r.json()).then(d=>{
+  const dot=document.getElementById('status-dot');
+  const lbl=document.getElementById('status-label');
+  if(d.ok){dot.style.background='#4ade80';dot.style.animation='pulse 2s infinite';lbl.textContent='Cookie aktif'}
+  else{dot.style.background='#f87171';dot.style.animation='none';lbl.textContent='Cookie eksik'}
+}).catch(()=>{});
+
+// Ülke seçeneğini doldur
+fetch('/api/countries').then(r=>r.json()).then(list=>{
+  const sel=document.getElementById('f-live-country');
+  list.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c.code;o.textContent=c.name;
+    sel.appendChild(o);
+  });
+}).catch(()=>{});
+</script>
+</body>
+</html>

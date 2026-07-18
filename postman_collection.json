@@ -1,0 +1,261 @@
+{
+  "info": {
+    "name": "TikTok API",
+    "description": "Modüler TikTok API istemcisi — tüm endpoint'ler",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:5000",
+      "type": "string",
+      "description": "Flask sunucu adresi"
+    }
+  ],
+  "item": [
+    {
+      "name": "Genel",
+      "item": [
+        {
+          "name": "Cookie Durumu",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/cookie",
+            "description": "Cookie'nin yüklü ve geçerli olup olmadığını kontrol et."
+          }
+        },
+        {
+          "name": "Ülke Listesi",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/countries",
+            "description": "Desteklenen 54 ülkenin kod ve isim listesini döndür."
+          }
+        },
+        {
+          "name": "Username → UID",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/resolve",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"hadise\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "TikTok @kullanıcı adını sayısal UID'ye çevir (search API ile)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Arama",
+      "item": [
+        {
+          "name": "Genel Arama",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"hadise\",\n  \"type\": 0,\n  \"count\": 10,\n  \"cursor\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Genel arama (discover/search). type: 0=video, 1=kullanıcı, 2=hashtag, 3=music"
+          }
+        },
+        {
+          "name": "Kullanıcı Ara",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search/user",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"hadise\",\n  \"count\": 10,\n  \"cursor\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Kullanıcı arama (discover/search type=1)."
+          }
+        },
+        {
+          "name": "Video Ara",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search/video",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"hadise\",\n  \"count\": 10,\n  \"cursor\": 0,\n  \"sort_type\": 0,\n  \"publish_time\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Video arama (search/item). sort_type: 0=en uygun, 1=en son, 2=en çok izlenen. publish_time: 0=tümü, 7=son hafta, 30=son ay"
+          }
+        },
+        {
+          "name": "Müzik Ara",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search/music",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"hadise\",\n  \"count\": 10,\n  \"cursor\": 0,\n  \"sort_type\": 0,\n  \"filter_by\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Müzik arama (music/search)."
+          }
+        },
+        {
+          "name": "Canlı Yayın Ara",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search/live",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"hadise\",\n  \"count\": 10,\n  \"cursor\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Canlı yayın arama (live/search)."
+          }
+        },
+        {
+          "name": "Fotoğraf Ara",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search/photo",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"hadise\",\n  \"count\": 10,\n  \"cursor\": 0,\n  \"sort_type\": 0,\n  \"publish_time\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Fotoğraf arama (search/photo)."
+          }
+        },
+        {
+          "name": "Mekan Ara",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/search/place",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"istanbul\",\n  \"count\": 10,\n  \"cursor\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Yer/mekan arama (search/place)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Video",
+      "item": [
+        {
+          "name": "Video Akışı (v1)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/feed",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cursor\": 0,\n  \"count\": 20\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Genel video akışını döndür (GET tabanlı, imzasız)."
+          }
+        },
+        {
+          "name": "Video Akışı (v2 / protobuf)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/feed/v2",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"feed_type\": 0,\n  \"count\": 6,\n  \"cursor\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Protobuf tabanlı video akışı (tam imzalı: X-Argus, X-Gorgon, X-Ladon).\n\n- feed_type: 0=Sana Özel, 6=Takip Edilen\n- cursor: sayfalama"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Canlı Yayın",
+      "item": [
+        {
+          "name": "Canlı Yayın Odaları (AUTO)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/live",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"country\": \"AUTO\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Canlı yayın odalarını döndür. AUTO'da IP'ye göre ülke tespiti."
+          }
+        },
+        {
+          "name": "Canlı Yayın Odaları (TR)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/live",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"country\": \"TR\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Türkiye'deki canlı yayın odaları."
+          }
+        },
+        {
+          "name": "Canlı Yayın Odaları (US)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/live",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"country\": \"US\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "ABD'deki canlı yayın odaları."
+          }
+        }
+      ]
+    }
+  ]
+}

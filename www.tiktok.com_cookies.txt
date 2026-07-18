@@ -1,0 +1,23 @@
+﻿# Netscape HTTP Cookie File
+
+# Web cookies
+www.tiktok.com	FALSE	/	FALSE	1785540564	msToken	9U5Xsu07OrsYSA1WE_dtIuxrmyX4r-t4
+.tiktok.com	TRUE	/	TRUE	1778628667	msToken	wNxUXYdA22fbhwC4exfEblNiOfs31ELrFyayE
+.tiktok.com	TRUE	/	TRUE	1783434055	ttwid	1%7CF06F1019jGvdY5hwrX3t6aTyoFRp2LdTQa6B72Xz1pc%7C1783434055%7C55733e4b5e62ee7812b54105067527545f258105414c1022ad46b8c6efdefbde
+www.tiktok.com	FALSE	/	FALSE	0	tt_csrf_token	xrRclUvg-MQ4t51qb12CLMX_30Uq3rGG09kA
+.tiktok.com	TRUE	/	TRUE	1785540564	sid_tt	c13102e5c0ab51938b1f7a6be2023aec
+.tiktok.com	TRUE	/	TRUE	1785540564	sessionid	c13102e5c0ab51938b1f7a6be2023aec
+.tiktok.com	TRUE	/	TRUE	1785540564	sessionid_ss	c13102e5c0ab51938b1f7a6be2023aec
+.tiktok.com	TRUE	/	TRUE	1785540564	odin_tt	b6402bd581f607dfbfd15a746880e84eef1905bb37f229104bae200a7191d6895f95ecf9dbd82e8e08eea89e7c459390b3179db8ca10b34b60d09f913897b593
+www.tiktok.com	FALSE	/	FALSE	0	tt_chain_token	grFuRQjIas8E3Vbf2VjFJQ==
+
+# Mobile API cookies
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	store-idc	alisg
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	store-country-code	tr
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	store-country-code-src	did
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	install_id	7663822013170108181
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	ttreq	1$f46429bcde9ec2622949fe9b13ac8f6d3994c652
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	odin_tt	705b505c1cb0a15ecaf926c8eeaadab15f8da2c1c118ce539066a379959bbfb872f4f446afa66c8d57851d4bd15dcc79502db34f22d924624642c5bd59837006779084b2180dd203de90ef5f5961ab0a
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	tt-target-idc	alisg
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	store-country-sign	MEIEDLVQpFLTUsFgs0VOtgQgjJAPnTHoalhr7A21NicmNqYn3iEh-Ij9b1GyvE6XBU8EEKDFBY4YQ5PUd82gl30ftuE
+api32-core-alisg.tiktokv.com	TRUE	/	FALSE	0	msToken	DoAZ--78M0Ezs5bknZiRPshf5RM1WWp1CNsLAD3T6xc4A6bVQwWprTrf9YWSqcQ3CzjaWEM1Lwxl2e_cPn7Nqph0Ckt78bLV2QAPEC79cNM=
