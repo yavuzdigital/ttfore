@@ -17,6 +17,22 @@
       "name": "Genel",
       "item": [
         {
+          "name": "Cihaz Kaydı",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/device/register",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Yeni cihaz kaydet (device_register API). Her çağrıda yeni device_id + install_id üretir."
+          }
+        },
+        {
           "name": "Cookie Durumu",
           "request": {
             "method": "GET",

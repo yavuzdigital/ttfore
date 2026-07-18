@@ -9,7 +9,7 @@ import requests as req_lib
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from tiktok.auth    import get_cookie
-from tiktok.mobile  import video_feed, resolve_uid, feed_v2, search, search_video, search_music, search_live, search_photo, search_place
+from tiktok.mobile  import video_feed, resolve_uid, feed_v2, search, search_video, search_music, search_live, search_photo, search_place, register_device
 from tiktok.webcast import (
     COUNTRY_DATA, detect_country_ip,
     fetch_live_rooms, get_webcast_cookies,
@@ -165,6 +165,12 @@ def api_search_photo():
     st     = int(body.get('sort_type', 0))
     pt     = int(body.get('publish_time', 0))
     return jsonify(search_photo(keyword, count=count, cursor=cursor, sort_type=st, publish_time=pt))
+
+
+@app.route('/api/device/register', methods=['POST'])
+def api_device_register():
+    """Yeni cihaz kaydet (device_register API). Her çağrıda yeni device_id + install_id üretir."""
+    return jsonify(register_device())
 
 
 @app.route('/api/search/place', methods=['POST'])

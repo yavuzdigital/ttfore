@@ -144,6 +144,23 @@
     </div>
   </div>
 
+  <!-- /api/device/register -->
+  <div class="card" id="c-devreg">
+    <div class="card-header" onclick="toggle('c-devreg')">
+      <span class="method POST">POST</span>
+      <span class="ep-path">/api/device/register</span>
+      <span class="ep-desc">Yeni cihaz kaydet</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="card-body">
+      <div class="actions">
+        <button class="btn-send" onclick="send('devreg','POST','/api/device/register',{},'r-devreg')">Gönder</button>
+        <span id="s-devreg"></span>
+      </div>
+      <div id="r-devreg"></div>
+    </div>
+  </div>
+
   <!-- /api/search/user -->
   <div class="card" id="c-search-user">
     <div class="card-header" onclick="toggle('c-search-user')">

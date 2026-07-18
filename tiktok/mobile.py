@@ -72,6 +72,131 @@ def get_random_device() -> dict:
     return random.choice(_device_pool)
 
 
+def register_device(model: dict = None) -> dict:
+    """service/2/device_register/ — yeni cihaz kaydet, device_id + install_id döndür."""
+    from .auth import get_cookie as _get_cookie
+    from lib.sign import Sign
+
+    _load_devices()
+    if not model:
+        model = random.choice(_model_pool) if _model_pool else {
+            'brand': 'google', 'model': 'G011A', 'resolution': '1600*900'
+        }
+
+    ts = int(time.time())
+    openudid = uuid.uuid4().hex[:16]
+    cdid = str(uuid.uuid4())
+    clientudid = str(uuid.uuid4())
+    req_id = str(uuid.uuid4())
+    iid = str(random.randint(7100000000000000000, 7999999999999999999))
+    did = str(random.randint(7100000000000000000, 7999999999999999999))
+    google_aid = str(uuid.uuid4())
+    res = model['resolution'].replace('*', 'x')
+
+    p = {
+        "req_id": req_id, "_rticket": str(ts * 1000),
+        "manifest_version_code": "440602", "app_language": "tr",
+        "app_type": "normal", "iid": iid,
+        "app_package": "com.zhiliaoapp.musically.go",
+        "channel": "googleplay", "device_type": model['model'],
+        "language": "tr", "host_abi": "x86_64", "locale": "tr-TR",
+        "resolution": "900*1600", "openudid": openudid,
+        "update_version_code": "440602", "ac2": "wifi",
+        "cdid": cdid, "sys_region": "TR",
+        "os_api": "28", "timezone_name": "Europe/Istanbul", "dpi": "300",
+        "carrier_region": "TR", "ac": "wifi", "os": "android",
+        "device_id": did, "os_version": "9",
+        "timezone_offset": "10800", "version_code": "440602",
+        "app_name": "musically_go", "ab_version": "44.6.2",
+        "version_name": "44.6.2", "device_brand": model['brand'],
+        "op_region": "TR", "ssmix": "a", "device_platform": "android",
+        "build_number": "44.6.2", "region": "TR", "aid": "1340",
+        "ts": str(ts),
+    }
+    enc = urllib.parse.urlencode(p)
+
+    body_json = json.dumps({
+        "header": {
+            "os": "Android", "os_version": "9", "os_api": 28,
+            "device_model": model['model'], "device_brand": model['brand'],
+            "device_manufacturer": model['brand'],
+            "cpu_abi": "arm64-v8a", "density_dpi": 300,
+            "display_density": "mdpi", "resolution": res,
+            "display_density_v2": "xhdpi", "resolution_v2": res,
+            "access": "wifi", "rom": "rel.cjw.20220518.114133",
+            "rom_version": f"{model['brand']}-user 9.0.0 20171130.276299 release-keys",
+            "language": "tr", "timezone": 3, "region": "TR",
+            "tz_name": "Europe/Istanbul", "tz_offset": 10800,
+            "sim_region": "tr", "carrier": "Turkcell", "mcc_mnc": "28601",
+            "clientudid": clientudid, "openudid": openudid,
+            "channel": "googleplay", "not_request_sender": 1, "aid": 1340,
+            "release_build": "e2f78a7_20260713", "ab_version": "44.6.2",
+            "google_aid": google_aid, "gaid_limited": 0,
+            "custom": {"lite_app_type": 3, "filter_warn": 0, "is_kids_mode": 0},
+            "package": "com.zhiliaoapp.musically.go",
+            "app_version": "44.6.2", "app_version_minor": "",
+            "version_code": 440602, "update_version_code": 440602,
+            "manifest_version_code": 440602,
+            "app_name": "musically_go", "tweaked_channel": "googleplay",
+            "display_name": "TikTok Lite",
+            "install_id": iid, "device_id": did,
+            "sig_hash": "aea615ab910015038f73c47e45d21466",
+            "cdid": cdid, "device_platform": "android",
+            "git_hash": "a78e02b", "sdk_version_code": 2051120,
+            "sdk_target_version": 30, "req_id": req_id,
+            "sdk_version": "2.5.11-alpha.0", "guest_mode": 0,
+            "sdk_flavor": "i18nInner",
+            "apk_first_install_time": (ts - random.randint(100, 86400)) * 1000,
+            "is_system_app": 0,
+        },
+        "magic_tag": "ss_app_log",
+        "_gen_time": ts * 1000 + random.randint(0, 999),
+    })
+
+    cookie = _get_cookie() + f'; install_id={iid}'
+    hdrs = {
+        'User-Agent': 'com.zhiliaoapp.musically.go/440602 (Linux; U; Android 9; tr_TR; ' + model['model'] + '; Build/PI;tt-ok/3.12.13.54.lite-ul)',
+        'Accept-Encoding': 'gzip', 'Connection': 'Keep-Alive',
+        'cookie': cookie, 'sdk-version': '2', 'passport-sdk-version': '1',
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-ss-stub': md5stub(body_json),
+        'x-ss-dp': '1340', 'x-tt-ultra-lite': '1',
+        'x-vc-bdturing-sdk-version': '2.3.15.i18n',
+        'x-tt-pba-encode': '0020',
+    }
+    signed = Sign(enc, headers=hdrs)
+
+    for attempt in range(3):
+        if attempt > 0:
+            body_obj = json.loads(body_json)
+            body_obj["header"]["install_id"] = str(random.randint(7100000000000000000, 7999999999999999999))
+            body_obj["header"]["device_id"] = str(random.randint(7100000000000000000, 7999999999999999999))
+            body_json = json.dumps(body_obj)
+            hdrs['x-ss-stub'] = md5stub(body_json)
+            signed = Sign(enc, headers=hdrs)
+
+        r = requests.post(
+            f"https://log16-normal-alisg.tiktokv.com/service/2/device_register/?{enc}",
+            data=body_json, headers=signed, timeout=15,
+        )
+        try:
+            data = r.json()
+            did_r = data.get("device_id_str") or str(data.get("device_id", "0"))
+            iid_r = data.get("install_id_str") or str(data.get("install_id", "0"))
+            if did_r != "0" and iid_r != "0":
+                return {
+                    "device_id": did_r, "install_id": iid_r,
+                    "iid": iid_r, "device_type": model['model'],
+                    "device_brand": model['brand'],
+                    "openudid": openudid, "cdid": cdid,
+                    "new_user": data.get("new_user", 0),
+                }
+        except Exception:
+            pass
+
+    return {"error": "all attempts failed", "raw": r.text[:300] if r else ""}
+
+
 def video_feed(session: requests.Session, cursor: int = 0, count: int = 20) -> dict:
     """Genel video akışını döndür (aweme/v1/feed)."""
     p = make_params({
